@@ -4,7 +4,7 @@ Deploys one `ufei` exporter for an OVN-Kubernetes EgressIP recovery group.
 
 ```sh
 helm upgrade --install ufei oci://ghcr.io/arch-err/charts/ufei \
-  --version 0.2.1 -n team-a -f values.yaml
+  --version 1.0.0 -n team-a -f values.yaml
 ```
 
 At minimum, configure `probes`. To validate or recover EgressIPs, also configure
