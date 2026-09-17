@@ -100,9 +100,43 @@ not mount a service account token.
 - `/metrics` — Prometheus metrics
 - `/healthz` and `/readyz` — process health; outbound failures do not fail them
 
-Core metrics are `ufei_probe_success`, `ufei_probe_total`,
-`ufei_probe_duration_seconds`, `ufei_consecutive_timeout_rounds`,
-`ufei_egressip_validation_success`, and `ufei_egressip_delete_total`.
+Metric names below use the default `ufei` prefix. Set `UFEI_METRICS_PREFIX` or
+the chart's `metricsPrefix` value to replace it; for example,
+`capcaasoperator_ufei` produces `capcaasoperator_ufei_probe_success`.
+
+| Metric | Type | Labels | Meaning |
+| --- | --- | --- | --- |
+| `ufei_probe_success` | gauge | `probe`, `protocol` | `1` when the last completed probe succeeded, otherwise `0` |
+| `ufei_probe_duration_seconds` | gauge | `probe`, `protocol` | Duration of the last completed probe, including DNS and TLS |
+| `ufei_probe_total` | counter | `probe`, `protocol`, `outcome` | Completed probes partitioned by `success`, `timeout`, `error`, or `canceled` |
+| `ufei_probe_last_run_timestamp_seconds` | gauge | `probe`, `protocol` | Unix timestamp of the last completed probe |
+| `ufei_probe_last_success_timestamp_seconds` | gauge | `probe`, `protocol` | Unix timestamp of the last successful probe; `0` until first success |
+| `ufei_consecutive_timeout_rounds` | gauge | none | Consecutive rounds that met the configured timeout quorum |
+| `ufei_egressip_validation_success` | gauge | none | `1` when every configured EgressIP exists, selects this pod, and is assigned; `0` on failure or when none are configured |
+| `ufei_egressip_assignment_info` | gauge | `egressip`, `ip`, `node` | Last validated EgressIP assignments; value is `1` and does not prove individual IP reachability |
+| `ufei_recovery_enabled` | gauge | none | `1` when automatic EgressIP deletion is enabled |
+| `ufei_recovery_last_attempt_timestamp_seconds` | gauge | none | Unix timestamp of the last recovery attempt in this process; `0` before any attempt |
+| `ufei_egressip_delete_total` | counter | `egressip`, `result` | Delete attempts partitioned by `success` or `error` |
+
+`timeout` means the probe deadline expired. Connection refusal, DNS failure,
+TLS failure, and unexpected HTTP status are `error` outcomes and do not count
+toward the recovery quorum. Process and Go runtime collectors are also exposed.
+
+Example PromQL:
+
+```promql
+# Current probe state
+ufei_probe_success
+
+# Probe outcome rate
+sum by (probe, outcome) (rate(ufei_probe_total[5m]))
+
+# Seconds since each probe last succeeded
+time() - ufei_probe_last_success_timestamp_seconds
+
+# Recovery deletions in the selected range
+sum by (egressip, result) (increase(ufei_egressip_delete_total[$__range]))
+```
 
 ## Development
 
