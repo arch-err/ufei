@@ -1,0 +1,31 @@
+image:
+  repository: registry.example.com/platform/ufei
+  tag: "0.1.0"
+serviceAccountName: ufei
+podLabels:
+  egress-group: team-a
+egressIPNames:
+  - team-a-egress
+recoveryEnabled: false
+timeout: 750ms
+interval: 10s
+failureThreshold: 3
+minTimeouts: 2
+cooldown: 5m
+probes:
+  - name: web
+    protocol: https
+    url: https://health.example.com/health
+    # Optional destination override; TLS SNI and HTTP Host still use health.example.com.
+    ip: 192.0.2.10
+  - name: tcp
+    protocol: tcp
+    domain: health.example.com
+    port: 443
+  - name: ping
+    protocol: icmp
+    ip: 192.0.2.10
+serviceMonitor:
+  enabled: true
+  labels:
+    release: kube-prometheus-stack

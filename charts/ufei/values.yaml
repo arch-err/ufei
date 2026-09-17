@@ -1,0 +1,56 @@
+image:
+  repository: ufei
+  tag: "0.1.0"
+  # When set, digest takes precedence over tag (for example sha256:...).
+  digest: ""
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+
+# One installation per egress recovery group. Recovery state is process-local.
+serviceAccountName: default
+podLabels: {}
+podAnnotations: {}
+
+# Supply probes pointing to external destinations, not pod, Service or node IPs.
+# Entries map directly to UFEI_PROBES (see README).
+probes: []
+egressIPNames: []
+recoveryEnabled: false
+interval: 10s
+timeout: 2s
+failureThreshold: 3
+minTimeouts: 1
+cooldown: 5m
+apiTimeout: 5s
+
+service:
+  port: 8080
+
+serviceMonitor:
+  enabled: false
+  labels: {}
+  interval: 15s
+  scrapeTimeout: 5s
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 128Mi
+
+podSecurityContext:
+  runAsNonRoot: true
+  sysctls:
+    - name: net.ipv4.ping_group_range
+      value: "0 2147483647"
+  seccompProfile:
+    type: RuntimeDefault
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+nodeSelector: {}
+tolerations: []
+affinity: {}

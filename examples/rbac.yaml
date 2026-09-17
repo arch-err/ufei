@@ -1,0 +1,58 @@
+# Platform-admin managed. Substitute namespace and EgressIP resource names.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ufei
+  namespace: team-a
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ufei-team-a
+rules:
+  - apiGroups: [k8s.ovn.org]
+    resources: [egressips]
+    resourceNames: [team-a-egress]
+    # The application lists with a metadata.name field selector for each allowed name.
+    verbs: [list, delete]
+  - apiGroups: [""]
+    resources: [namespaces]
+    resourceNames: [team-a]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ufei-team-a
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ufei-team-a
+subjects:
+  - kind: ServiceAccount
+    name: ufei
+    namespace: team-a
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ufei
+  namespace: team-a
+rules:
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ufei
+  namespace: team-a
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ufei
+subjects:
+  - kind: ServiceAccount
+    name: ufei
+    namespace: team-a

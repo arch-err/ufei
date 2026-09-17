@@ -1,0 +1,14 @@
+apiVersion: k8s.ovn.org/v1
+kind: EgressIP
+metadata:
+  name: team-a-egress
+spec:
+  egressIPs:
+    - 192.0.2.100
+    - 192.0.2.101
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: team-a
+  podSelector:
+    matchLabels:
+      egress-group: team-a

@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ufei.name" . }}
+  labels:
+    {{- include "ufei.selector" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "ufei.selector" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- mustMergeOverwrite (deepCopy .Values.podLabels) (dict "app.kubernetes.io/name" "ufei" "app.kubernetes.io/instance" .Release.Name) | toYaml | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccountName | quote }}
+      automountServiceAccountToken: {{ not (empty .Values.egressIPNames) }}
+      terminationGracePeriodSeconds: 15
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: ufei
+          image: {{ if .Values.image.digest }}{{ printf "%s@%s" .Values.image.repository .Values.image.digest | quote }}{{ else }}{{ printf "%s:%s" .Values.image.repository .Values.image.tag | quote }}{{ end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: UFEI_PROBES
+              value: {{ .Values.probes | toJson | quote }}
+            - name: UFEI_EGRESSIP_NAMES
+              value: {{ join "," .Values.egressIPNames | quote }}
+            - name: UFEI_RECOVERY_ENABLED
+              value: {{ .Values.recoveryEnabled | quote }}
+            - name: UFEI_INTERVAL
+              value: {{ .Values.interval | quote }}
+            - name: UFEI_TIMEOUT
+              value: {{ .Values.timeout | quote }}
+            - name: UFEI_FAILURE_THRESHOLD
+              value: {{ .Values.failureThreshold | quote }}
+            - name: UFEI_MIN_TIMEOUTS
+              value: {{ .Values.minTimeouts | quote }}
+            - name: UFEI_COOLDOWN
+              value: {{ .Values.cooldown | quote }}
+            - name: UFEI_API_TIMEOUT
+              value: {{ .Values.apiTimeout | quote }}
+            - name: UFEI_LISTEN_ADDRESS
+              value: ":8080"
+            - name: UFEI_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: UFEI_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - name: metrics
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: metrics
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: metrics
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

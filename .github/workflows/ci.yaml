@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  workflow_call:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: azure/setup-helm@bf6a7d304bc2fdb57e0331155b7ebf2c504acf0a # v4
+      - name: Format, test and validate
+        run: |
+          test -z "$(gofmt -l cmd internal)"
+          go test -race ./...
+          go vet ./...
+          helm lint --strict charts/ufei -f examples/values.yaml
+          helm template ufei charts/ufei -f examples/values.yaml >/dev/null
+      - name: Build container
+        run: docker build --tag ufei:ci .
