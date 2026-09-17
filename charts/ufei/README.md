@@ -4,7 +4,7 @@ Deploys one `ufei` exporter for an OVN-Kubernetes EgressIP recovery group.
 
 ```sh
 helm upgrade --install ufei oci://ghcr.io/arch-err/charts/ufei \
-  --version 0.2.0 -n team-a -f values.yaml
+  --version 0.2.1 -n team-a -f values.yaml
 ```
 
 At minimum, configure `probes`. To validate or recover EgressIPs, also configure
@@ -14,7 +14,8 @@ and pod labels selected by those EgressIPs.
 
 The chart creates a ServiceAccount by default. Set `serviceAccount.name` to the
 name referenced by external RBAC, or set `serviceAccount.create=false` to use an
-existing account. Cluster-scoped RBAC remains externally managed.
+existing account. It also creates namespaced pod-read RBAC by default; disable
+that with `rbac.create=false`. Cluster-scoped RBAC remains externally managed.
 
 Recovery is disabled by default. Enable it only when the managed resources are
 continuously reconciled by Argo CD with self-heal enabled. See the

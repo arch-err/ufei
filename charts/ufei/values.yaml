@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/arch-err/ufei
-  tag: "0.2.0"
+  tag: "0.2.1"
   # When set, digest takes precedence over tag (for example sha256:...).
   digest: ""
   pullPolicy: IfNotPresent
@@ -11,6 +11,9 @@ serviceAccount:
   create: true
   name: ""
   annotations: {}
+rbac:
+  # Namespaced pod read access only. EgressIP and namespace access remain platform-managed.
+  create: true
 podLabels: {}
 podAnnotations: {}
 

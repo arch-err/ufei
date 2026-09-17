@@ -34,6 +34,12 @@
         "annotations": {"type": "object", "additionalProperties": {"type": "string"}}
       }
     },
+    "rbac": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["create"],
+      "properties": {"create": {"type": "boolean"}}
+    },
     "podLabels": {"type": "object", "additionalProperties": {"type": "string"}},
     "podAnnotations": {"type": "object", "additionalProperties": {"type": "string"}},
     "probes": {
