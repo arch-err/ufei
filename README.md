@@ -1,5 +1,3 @@
-# ufei
-
 ![UFEI — Unfuck EgressIP](assets/banner.png)
 
 `ufei` probes outbound connectivity through OVN-Kubernetes EgressIPs and exports
