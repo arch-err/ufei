@@ -94,7 +94,7 @@ jobs:
         run: |
           cp -R charts/ufei "$RUNNER_TEMP/chart"
           sed -i \
-            -e "s|^  repository: ufei$|  repository: $IMAGE|" \
+            -e "s|^  repository: ghcr.io/arch-err/ufei$|  repository: $IMAGE|" \
             -e "s|^  digest: \"\"$|  digest: \"$DIGEST\"|" \
             "$RUNNER_TEMP/chart/values.yaml"
           grep -Fx "  repository: $IMAGE" "$RUNNER_TEMP/chart/values.yaml"

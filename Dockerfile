@@ -9,7 +9,17 @@ RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /ufei ./cmd/ufei
 FROM alpine:3.24@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
 LABEL org.opencontainers.image.title="ufei" \
       org.opencontainers.image.description="Bounded egress probes and optional OVN EgressIP recovery" \
-      org.opencontainers.image.licenses="MIT"
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.source="https://github.com/arch-err/ufei" \
+      org.opencontainers.image.url="https://github.com/arch-err/ufei" \
+      org.opencontainers.image.documentation="https://github.com/arch-err/ufei#readme" \
+      org.opencontainers.image.authors="arch-err <archer@jesber.xyz>" \
+      org.opencontainers.image.vendor="arch-err" \
+      io.artifacthub.package.category="networking" \
+      io.artifacthub.package.keywords="egress,egressip,kubernetes,openshift,ovn-kubernetes,prometheus" \
+      io.artifacthub.package.license="MIT" \
+      io.artifacthub.package.logo-url="https://raw.githubusercontent.com/arch-err/ufei/main/assets/logo.png" \
+      io.artifacthub.package.maintainers="[{\"name\":\"arch-err\",\"email\":\"archer@jesber.xyz\"}]"
 RUN apk add --no-cache ca-certificates iputils-ping \
     && adduser -D -u 65532 ufei
 COPY --from=build /ufei /usr/local/bin/ufei

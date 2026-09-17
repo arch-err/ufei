@@ -4,3 +4,38 @@ description: Bounded egress probes and optional OVN EgressIP recovery
 type: application
 version: 0.1.0
 appVersion: 0.1.0
+home: https://github.com/arch-err/ufei
+icon: https://raw.githubusercontent.com/arch-err/ufei/main/assets/logo.png
+sources:
+  - https://github.com/arch-err/ufei
+maintainers:
+  - name: arch-err
+    email: archer@jesber.xyz
+    url: https://github.com/arch-err
+keywords:
+  - egress
+  - egressip
+  - kubernetes
+  - openshift
+  - ovn-kubernetes
+  - prometheus
+annotations:
+  artifacthub.io/category: networking
+  artifacthub.io/license: MIT
+  artifacthub.io/images: |
+    - name: ufei
+      image: ghcr.io/arch-err/ufei:0.1.0
+      platforms:
+        - linux/amd64
+        - linux/arm64
+  artifacthub.io/links: |
+    - name: support
+      url: https://github.com/arch-err/ufei/issues
+    - name: OVN-Kubernetes EgressIP documentation
+      url: https://ovn-kubernetes.io/features/cluster-egress-controls/egress-ip/
+  artifacthub.io/screenshots: |
+    - title: ufei
+      url: https://raw.githubusercontent.com/arch-err/ufei/main/assets/banner.png
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial release

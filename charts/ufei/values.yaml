@@ -1,5 +1,5 @@
 image:
-  repository: ufei
+  repository: ghcr.io/arch-err/ufei
   tag: "0.1.0"
   # When set, digest takes precedence over tag (for example sha256:...).
   digest: ""

@@ -1,5 +1,7 @@
 # ufei
 
+![UFEI — Unfuck EgressIP](assets/banner.png)
+
 `ufei` probes outbound connectivity through OVN-Kubernetes EgressIPs and exports
 Prometheus metrics. After repeated timeouts it can delete an explicit allowlist
 of EgressIP resources so Argo CD recreates them.
