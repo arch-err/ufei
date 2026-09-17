@@ -13,7 +13,7 @@ chart to `oci://ghcr.io/arch-err/charts/ufei`. Install a published chart with:
 
 ```sh
 helm upgrade --install ufei oci://ghcr.io/arch-err/charts/ufei \
-  --version 0.1.0 -n team-a -f values.yaml
+  --version 0.1.1 -n team-a -f values.yaml
 ```
 
 The release chart references the matching container by digest. Linux amd64 and
@@ -47,6 +47,7 @@ directly to these settings.
 | `UFEI_TIMEOUT` | `2s` | Default deadline per probe |
 | `UFEI_INTERVAL` | `10s` | Delay between completed rounds, plus 0–10% jitter |
 | `UFEI_LISTEN_ADDRESS` | `:8080` | Metrics and health listener |
+| `UFEI_METRICS_PREFIX` | `ufei` | Prometheus metric namespace (without the separator underscore) |
 | `UFEI_EGRESSIP_NAMES` | empty | Comma-separated EgressIP resource allowlist |
 | `UFEI_RECOVERY_ENABLED` | `false` | Enable deletion after repeated timeouts |
 | `UFEI_FAILURE_THRESHOLD` | `3` | Failed rounds required before recovery |

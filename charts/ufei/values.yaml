@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/arch-err/ufei
-  tag: "0.1.0"
+  tag: "0.1.1"
   # When set, digest takes precedence over tag (for example sha256:...).
   digest: ""
   pullPolicy: IfNotPresent
@@ -16,6 +16,7 @@ podAnnotations: {}
 probes: []
 egressIPNames: []
 recoveryEnabled: false
+metricsPrefix: ufei
 interval: 10s
 timeout: 2s
 failureThreshold: 3

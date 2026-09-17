@@ -37,7 +37,7 @@ func run() error {
 	}
 	reg := prometheus.NewRegistry()
 	reg.MustRegister(prometheus.NewGoCollector(), prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{}))
-	monitor := ufei.NewMonitor(cfg, api, ufei.NewMetrics(reg))
+	monitor := ufei.NewMonitor(cfg, api, ufei.NewMetrics(reg, cfg.MetricsPrefix))
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 	mux := http.NewServeMux()
@@ -51,7 +51,7 @@ func run() error {
 	go func() { serverErr <- server.ListenAndServe() }()
 	done := make(chan struct{})
 	go func() { defer close(done); monitor.Run(ctx) }()
-	slog.Info("ufei started", "listen", cfg.Listen, "probes", len(cfg.Probes), "egressips", cfg.EgressIPs, "recovery", cfg.RecoveryEnabled, "startup_grace", cfg.Cooldown)
+	slog.Info("ufei started", "listen", cfg.Listen, "metrics_prefix", cfg.MetricsPrefix, "probes", len(cfg.Probes), "egressips", cfg.EgressIPs, "recovery", cfg.RecoveryEnabled, "startup_grace", cfg.Cooldown)
 	select {
 	case <-ctx.Done():
 	case err = <-serverErr:

@@ -57,6 +57,7 @@
       }
     },
     "recoveryEnabled": {"type": "boolean"},
+    "metricsPrefix": {"type": "string", "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$", "maxLength": 63},
     "interval": {"type": "string", "minLength": 1},
     "timeout": {"type": "string", "minLength": 1},
     "failureThreshold": {"type": "integer", "minimum": 1},

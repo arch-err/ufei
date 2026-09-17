@@ -11,9 +11,23 @@ func TestConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if c.Probes[0].URL != "https://example.test:8443/health?q=1" || c.RecoveryEnabled {
+	if c.Probes[0].URL != "https://example.test:8443/health?q=1" || c.RecoveryEnabled || c.MetricsPrefix != "ufei" {
 		t.Fatalf("unexpected config: %+v", c)
 	}
+	t.Run("metrics prefix", func(t *testing.T) {
+		t.Setenv("UFEI_METRICS_PREFIX", "capcaasoperator_ufei")
+		if c, err := LoadConfig(); err != nil || c.MetricsPrefix != "capcaasoperator_ufei" {
+			t.Fatalf("valid prefix rejected: %q, %v", c.MetricsPrefix, err)
+		}
+		for _, prefix := range []string{"", "1ufei", "ufei-bad", strings.Repeat("a", 64)} {
+			t.Run(prefix, func(t *testing.T) {
+				t.Setenv("UFEI_METRICS_PREFIX", prefix)
+				if _, err := LoadConfig(); err == nil {
+					t.Fatal("accepted invalid metric prefix")
+				}
+			})
+		}
+	})
 	for _, key := range []string{"UFEI_TIMEOUT", "UFEI_INTERVAL", "UFEI_COOLDOWN", "UFEI_API_TIMEOUT"} {
 		t.Run(key, func(t *testing.T) {
 			t.Setenv(key, "0s")

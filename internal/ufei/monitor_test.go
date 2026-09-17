@@ -16,7 +16,7 @@ import (
 func TestMetricNames(t *testing.T) {
 	reg := prometheus.NewRegistry()
 	c := Config{Probes: []Probe{{Name: "web", Protocol: "http"}}, EgressIPs: []string{"edge"}}
-	NewMonitor(c, nil, NewMetrics(reg))
+	NewMonitor(c, nil, NewMetrics(reg, "capcaasoperator_ufei"))
 	families, err := reg.Gather()
 	if err != nil {
 		t.Fatal(err)
@@ -25,8 +25,8 @@ func TestMetricNames(t *testing.T) {
 		t.Fatal("no metric families registered")
 	}
 	for _, family := range families {
-		if !strings.HasPrefix(family.GetName(), "ufei_") {
-			t.Fatalf("metric %q does not use ufei prefix", family.GetName())
+		if !strings.HasPrefix(family.GetName(), "capcaasoperator_ufei_") {
+			t.Fatalf("metric %q does not use configured prefix", family.GetName())
 		}
 	}
 }
@@ -57,7 +57,7 @@ func newTestMonitor() (*Monitor, *fakeAPI) {
 		f.items = append(f.items, EgressIP{ObjectMeta: metav1.ObjectMeta{Name: name, UID: types.UID(name), ResourceVersion: "1"}})
 	}
 	c := Config{Probes: []Probe{{Name: "web", Protocol: "http"}}, EgressIPs: []string{"a", "b"}, RecoveryEnabled: true, FailureThreshold: 2, MinTimeouts: 1, Cooldown: time.Minute, APITimeout: time.Second}
-	m := NewMonitor(c, f, NewMetrics(prometheus.NewRegistry()))
+	m := NewMonitor(c, f, NewMetrics(prometheus.NewRegistry(), "ufei"))
 	m.nextRecovery = time.Time{}
 	m.Probe = func(context.Context, Probe) Result { return Result{Outcome: "timeout"} }
 	return m, f

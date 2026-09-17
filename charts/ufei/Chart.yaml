@@ -2,8 +2,8 @@ apiVersion: v2
 name: ufei
 description: Bounded egress probes and optional OVN EgressIP recovery
 type: application
-version: 0.1.0
-appVersion: 0.1.0
+version: 0.1.1
+appVersion: 0.1.1
 home: https://github.com/arch-err/ufei
 icon: https://raw.githubusercontent.com/arch-err/ufei/main/assets/logo.png
 sources:
@@ -24,7 +24,7 @@ annotations:
   artifacthub.io/license: MIT
   artifacthub.io/images: |
     - name: ufei
-      image: ghcr.io/arch-err/ufei:0.1.0
+      image: ghcr.io/arch-err/ufei:0.1.1
       platforms:
         - linux/amd64
         - linux/arm64
@@ -38,4 +38,4 @@ annotations:
       url: https://raw.githubusercontent.com/arch-err/ufei/main/assets/banner.png
   artifacthub.io/changes: |
     - kind: added
-      description: Initial release
+      description: Add a configurable Prometheus metric prefix

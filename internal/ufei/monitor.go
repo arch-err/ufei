@@ -17,10 +17,10 @@ type Metrics struct {
 	Failures, APIReady, RecoveryEnabled, LastRecovery prometheus.Gauge
 }
 
-func NewMetrics(reg prometheus.Registerer) *Metrics {
+func NewMetrics(reg prometheus.Registerer, prefix string) *Metrics {
 	m := &Metrics{}
 	gauge := func(name, help string) *prometheus.GaugeVec {
-		g := prometheus.NewGaugeVec(prometheus.GaugeOpts{Namespace: "ufei", Name: name, Help: help}, []string{"probe", "protocol"})
+		g := prometheus.NewGaugeVec(prometheus.GaugeOpts{Namespace: prefix, Name: name, Help: help}, []string{"probe", "protocol"})
 		reg.MustRegister(g)
 		return g
 	}
@@ -28,11 +28,11 @@ func NewMetrics(reg prometheus.Registerer) *Metrics {
 	m.Duration = gauge("probe_duration_seconds", "Duration of the last completed probe, including DNS and TLS.")
 	m.LastRun = gauge("probe_last_run_timestamp_seconds", "Timestamp of the last completed probe.")
 	m.LastSuccess = gauge("probe_last_success_timestamp_seconds", "Timestamp of the last successful probe; zero until first success.")
-	m.Results = prometheus.NewCounterVec(prometheus.CounterOpts{Namespace: "ufei", Name: "probe_total", Help: "Completed probes by outcome: success, timeout, error, canceled."}, []string{"probe", "protocol", "outcome"})
-	m.Deletes = prometheus.NewCounterVec(prometheus.CounterOpts{Namespace: "ufei", Name: "egressip_delete_total", Help: "EgressIP delete requests by result: success or error."}, []string{"egressip", "result"})
-	m.Assigned = prometheus.NewGaugeVec(prometheus.GaugeOpts{Namespace: "ufei", Name: "egressip_assignment_info", Help: "Last validated EgressIP assignments; not a measurement of individual IP reachability."}, []string{"egressip", "ip", "node"})
+	m.Results = prometheus.NewCounterVec(prometheus.CounterOpts{Namespace: prefix, Name: "probe_total", Help: "Completed probes by outcome: success, timeout, error, canceled."}, []string{"probe", "protocol", "outcome"})
+	m.Deletes = prometheus.NewCounterVec(prometheus.CounterOpts{Namespace: prefix, Name: "egressip_delete_total", Help: "EgressIP delete requests by result: success or error."}, []string{"egressip", "result"})
+	m.Assigned = prometheus.NewGaugeVec(prometheus.GaugeOpts{Namespace: prefix, Name: "egressip_assignment_info", Help: "Last validated EgressIP assignments; not a measurement of individual IP reachability."}, []string{"egressip", "ip", "node"})
 	single := func(name, help string) prometheus.Gauge {
-		g := prometheus.NewGauge(prometheus.GaugeOpts{Namespace: "ufei", Name: name, Help: help})
+		g := prometheus.NewGauge(prometheus.GaugeOpts{Namespace: prefix, Name: name, Help: help})
 		reg.MustRegister(g)
 		return g
 	}

@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -27,13 +28,15 @@ type Probe struct {
 }
 
 type Config struct {
-	Probes                                  []Probe
-	EgressIPs                               []string
-	Interval, Timeout, Cooldown, APITimeout time.Duration
-	FailureThreshold, MinTimeouts           int
-	RecoveryEnabled                         bool
-	Listen, Namespace, PodName              string
+	Probes                                    []Probe
+	EgressIPs                                 []string
+	Interval, Timeout, Cooldown, APITimeout   time.Duration
+	FailureThreshold, MinTimeouts             int
+	RecoveryEnabled                           bool
+	Listen, Namespace, PodName, MetricsPrefix string
 }
+
+var metricPrefixPattern = regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
 
 const (
 	minInterval   = time.Second
@@ -44,9 +47,13 @@ const (
 
 func LoadConfig() (Config, error) {
 	c := Config{
-		Listen:    env("UFEI_LISTEN_ADDRESS", ":8080"),
-		Namespace: os.Getenv("UFEI_NAMESPACE"),
-		PodName:   os.Getenv("UFEI_POD_NAME"),
+		Listen:        env("UFEI_LISTEN_ADDRESS", ":8080"),
+		Namespace:     os.Getenv("UFEI_NAMESPACE"),
+		PodName:       os.Getenv("UFEI_POD_NAME"),
+		MetricsPrefix: env("UFEI_METRICS_PREFIX", "ufei"),
+	}
+	if len(c.MetricsPrefix) > 63 || !metricPrefixPattern.MatchString(c.MetricsPrefix) {
+		return c, fmt.Errorf("UFEI_METRICS_PREFIX must be a valid Prometheus metric namespace of at most 63 characters")
 	}
 	for _, x := range []struct {
 		name, fallback string
