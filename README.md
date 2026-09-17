@@ -13,7 +13,7 @@ chart to `oci://ghcr.io/arch-err/charts/ufei`. Install a published chart with:
 
 ```sh
 helm upgrade --install ufei oci://ghcr.io/arch-err/charts/ufei \
-  --version 0.1.1 -n team-a -f values.yaml
+  --version 0.2.0 -n team-a -f values.yaml
 ```
 
 The release chart references the matching container by digest. Linux amd64 and
@@ -23,8 +23,8 @@ GitHub Release.
 To build and deploy from source instead:
 
 ```sh
-docker build -t registry.example.com/platform/ufei:0.1.0 .
-docker push registry.example.com/platform/ufei:0.1.0
+docker build -t registry.example.com/platform/ufei:0.2.0 .
+docker push registry.example.com/platform/ufei:0.2.0
 helm upgrade --install ufei charts/ufei -n team-a -f examples/values.yaml
 ```
 

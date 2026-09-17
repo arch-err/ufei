@@ -24,7 +24,16 @@
         "properties": {"name": {"type": "string", "minLength": 1}}
       }
     },
-    "serviceAccountName": {"type": "string", "minLength": 1},
+    "serviceAccount": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["create", "name", "annotations"],
+      "properties": {
+        "create": {"type": "boolean"},
+        "name": {"type": "string"},
+        "annotations": {"type": "object", "additionalProperties": {"type": "string"}}
+      }
+    },
     "podLabels": {"type": "object", "additionalProperties": {"type": "string"}},
     "podAnnotations": {"type": "object", "additionalProperties": {"type": "string"}},
     "probes": {

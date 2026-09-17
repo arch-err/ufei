@@ -1,7 +1,9 @@
 image:
   repository: registry.example.com/platform/ufei
-  tag: "0.1.1"
-serviceAccountName: ufei
+  tag: "0.2.0"
+serviceAccount:
+  create: true
+  name: ufei
 podLabels:
   egress-group: team-a
 egressIPNames:
